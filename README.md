@@ -13,7 +13,7 @@ Foundry-based toolkit for deterministic account generation and transaction simul
 ## Installation
 
 ```bash
-git clone <repository>
+git clone https://github.com/0xkieranwilliams/foundry-account-generator-and-activity-producer.git
 cd foundry-account-generator-and-activity-producer
 
 # Install dependencies
