@@ -1,66 +1,109 @@
-## Foundry
+# Foundry Account Generator & Activity Simulator
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+Foundry-based toolkit for deterministic account generation and transaction simulation.
 
-Foundry consists of:
+## Features
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+- Deterministic account generation (50 accounts)
+- Chain-aware key derivation
+- Fund distribution and consolidation
+- Transaction simulation with temporal variance
+- Output and export account keys for future usage
 
-## Documentation
+## Installation
 
-https://book.getfoundry.sh/
+```bash
+git clone <repository>
+cd foundry-account-generator-and-activity-producer
+
+# Install dependencies
+make install
+
+# Setup environment
+cp .env.example .env
+```
+
+Required `.env` configuration:
+```bash
+MASTER_KEY=             # Root private key
+CONSOLIDATION_TARGET=   # Consolidation address
+RPC_URL=               # RPC endpoint
+```
 
 ## Usage
 
-### Build
+Generate accounts and export keys:
+```bash
+# Generate accounts
+make gen-accounts
 
-```shell
-$ forge build
+# Export all credentials as JSON
+make export-keys    # -> accounts.json
+
+# Export only private keys
+make list-keys     # -> private_keys.txt
 ```
 
-### Test
-
-```shell
-$ forge test
+Fund management:
+```bash
+make distribute    # Distribute initial funds
+make simulate     # Run transaction simulation
+make consolidate  # Consolidate to target address
 ```
 
-### Format
+## Implementation Details
 
-```shell
-$ forge fmt
+Core parameters:
+```solidity
+ACCOUNTS_COUNT = 1000;      // Number of accounts
+MIN_TRANSFER = 0.01 ether;  // Base transfer amount
+ACTIVITY_ROUNDS = 5;        // Simulation rounds
 ```
 
-### Gas Snapshots
-
-```shell
-$ forge snapshot
+Key derivation:
+```solidity
+bytes32 masterSeed = keccak256(abi.encodePacked(masterKey, block.chainid));
+uint256 privateKey = uint256(keccak256(abi.encodePacked(masterSeed, i)));
 ```
 
-### Anvil
+## Output Formats
 
-```shell
-$ anvil
+accounts.json:
+```json
+[
+  {
+    "index": 0,
+    "address": "0x...",
+    "privateKey": "0x..."
+  }
+]
 ```
 
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
+private_keys.txt:
+```
+0x1234...
+0x5678...
 ```
 
-### Cast
+## Commands
 
-```shell
-$ cast <subcommand>
+```bash
+make install         # Install dependencies
+make build          # Compile contracts
+make gen-accounts   # Generate accounts
+make distribute     # Distribute funds
+make simulate       # Run simulation
+make consolidate    # Consolidate funds
+make export-keys    # Export JSON credentials
+make list-keys      # Extract private keys
 ```
 
-### Help
+## Dependencies
 
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+- Foundry (latest)
+- Solidity ^0.8.19
+- forge-std
+
+## License
+
+MIT
