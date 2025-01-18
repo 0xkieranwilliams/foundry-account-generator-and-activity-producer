@@ -55,7 +55,7 @@ make consolidate  # Consolidate to target address
 
 Core parameters:
 ```solidity
-ACCOUNTS_COUNT = 1000;      // Number of accounts
+ACCOUNTS_COUNT = 50;        // Number of accounts
 MIN_TRANSFER = 0.01 ether;  // Base transfer amount
 ACTIVITY_ROUNDS = 5;        // Simulation rounds
 ```
