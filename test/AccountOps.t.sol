@@ -11,10 +11,16 @@ contract AccountOpsTest is Test {
     address constant CONSOLIDATION_TARGET = address(0x1234567890123456789012345678901234567890);
     uint256 constant INITIAL_BALANCE = 100 ether;
     uint256 constant ACCOUNTS_COUNT = 50;
+    uint256 constant MIN_TRANSFER = 10000000000000000; // 0.01 ether
+    uint256 constant ACTIVITY_ROUNDS = 5; // 5 rounds of interactions per account
     
     function setUp() public {
         vm.setEnv("MASTER_KEY", vm.toString(MASTER_KEY));
         vm.setEnv("CONSOLIDATION_TARGET", vm.toString(CONSOLIDATION_TARGET));
+
+        vm.setEnv("ACCOUNTS_COUNT", vm.toString(ACCOUNTS_COUNT));
+        vm.setEnv("MIN_TRANSFER", vm.toString(MIN_TRANSFER));
+        vm.setEnv("ACTIVITY_ROUNDS", vm.toString(ACTIVITY_ROUNDS));
         
         ops = new AccountOps();
         ops.setUp();
@@ -45,26 +51,6 @@ contract AccountOpsTest is Test {
                 firstBatch[i]
             );
         }
-    }
-
-    function test_genAccounts_ChainSpecificDerivation() public {
-        ops.genAccounts();
-        address[] memory chain1Accounts = extractAddresses();
-        
-        vm.chainId(42161); // Arbitrum
-        ops = new AccountOps();
-        ops.setUp();
-        ops.genAccounts();
-        address[] memory chain2Accounts = extractAddresses();
-        
-        bool allDifferent = true;
-        for (uint256 i = 0; i < chain1Accounts.length; i++) {
-            if (chain1Accounts[i] == chain2Accounts[i]) {
-                allDifferent = false;
-                break;
-            }
-        }
-        assertTrue(allDifferent, "Chain-specific derivation failed");
     }
 
     function test_distribute_InitialFundDistribution() public {

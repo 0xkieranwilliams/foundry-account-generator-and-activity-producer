@@ -24,7 +24,7 @@ endif
 
 install:
 	@echo "Installing dependencies..."
-	@$(FORGE) install foundry-rs/forge-std --no-git
+	# @$(FORGE) install foundry-rs/forge-std --no-git
 
 build:
 	@echo "Building contracts..."

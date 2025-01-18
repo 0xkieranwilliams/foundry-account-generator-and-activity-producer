@@ -5,9 +5,9 @@ import {Script} from "forge-std/Script.sol";
 import {console2} from "forge-std/console2.sol";
 
 contract AccountOps is Script {
-   uint256 constant ACCOUNTS_COUNT = 50;
-   uint256 constant MIN_TRANSFER = 0.01 ether;
-   uint256 constant ACTIVITY_ROUNDS = 5;
+   uint256 ACCOUNTS_COUNT;
+   uint256 MIN_TRANSFER;
+   uint256 ACTIVITY_ROUNDS;
    
    struct ContractCreatedAccount {
        address addr;
@@ -21,11 +21,14 @@ contract AccountOps is Script {
    function setUp() public {
        masterKey = vm.envUint("MASTER_KEY");
        consolidationTarget = vm.envAddress("CONSOLIDATION_TARGET");
+       ACCOUNTS_COUNT = vm.envUint("ACCOUNTS_COUNT");
+       MIN_TRANSFER = vm.envUint("MIN_TRANSFER");
+       ACTIVITY_ROUNDS = vm.envUint("ACTIVITY_ROUNDS");
        require(masterKey != 0 && consolidationTarget != address(0), "Invalid setup");
    }
 
    function genAccounts() public {
-       bytes32 masterSeed = keccak256(abi.encodePacked(masterKey, block.chainid));
+       bytes32 masterSeed = keccak256(abi.encodePacked(masterKey));
        
        for (uint256 i; i < ACCOUNTS_COUNT; ++i) {
            uint256 privateKey = uint256(keccak256(abi.encodePacked(masterSeed, i)));
