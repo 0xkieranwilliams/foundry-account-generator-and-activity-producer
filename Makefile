@@ -52,20 +52,27 @@ distribute: check-env build
 		--priority-gas-price $(PRIORITY_GAS)
 
 simulate: check-env build
-	@echo "Simulating organic activity..."
+	@echo "Executing live transaction sequence..."
 	@$(FORGE) script $(CONTRACT):$(CONTRACT_NAME) \
 		--sig "simulateActivity()" \
 		-vvvv \
-		--fork-url $(RPC_URL) \
-		--broadcast
+		--rpc-url $(RPC_URL) \
+		--broadcast \
+		--skip-simulation \
+		--slow \
+		--priority-gas-price $(PRIORITY_GAS) \
+		--with-gas-price $(BASE_GAS) \
+		--delay 2 \
+		--retries 3
 
 consolidate: check-env build
-	@echo "Consolidating funds..."
+	@echo "Executing precision-optimized consolidation..."
 	@$(FORGE) script $(CONTRACT):$(CONTRACT_NAME) \
 		--sig "consolidate()" \
 		-vvvv \
-		--fork-url $(RPC_URL) \
-		--broadcast
+		--rpc-url $(RPC_URL) \
+		--broadcast \
+		--skip-simulation \
 
 # Credential Management Operations
 export-keys: check-env build
