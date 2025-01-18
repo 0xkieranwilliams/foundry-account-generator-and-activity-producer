@@ -4,7 +4,7 @@ FORGE = forge
 CAST = cast
 
 # Contract Configuration
-CONTRACT = AccountOps.s.sol
+CONTRACT = ./script/AccountOps.s.sol
 CONTRACT_NAME = AccountOps
 
 # Runtime Configuration

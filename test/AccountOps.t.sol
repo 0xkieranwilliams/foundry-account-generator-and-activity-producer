@@ -193,7 +193,7 @@ contract AccountOpsTest is Test {
      console2.log("\n=== Lifecycle Test Complete ===");
   }
 
-  function extractAddresses() internal view returns (address[] memory) {
+  function extractAddresses() internal returns (address[] memory) {
       AccountOps.ContractCreatedAccount[] memory contractAccounts = ops.getAccounts();
       address[] memory addrs = new address[](contractAccounts.length);
       for (uint256 i = 0; i < contractAccounts.length; i++) {

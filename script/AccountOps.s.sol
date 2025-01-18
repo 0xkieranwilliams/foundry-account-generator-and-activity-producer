@@ -28,21 +28,34 @@ contract AccountOps is Script {
    }
 
    function genAccounts() public {
-       bytes32 masterSeed = keccak256(abi.encodePacked(masterKey));
-       
-       for (uint256 i; i < ACCOUNTS_COUNT; ++i) {
-           uint256 privateKey = uint256(keccak256(abi.encodePacked(masterSeed, i)));
-           address addr = vm.addr(privateKey);
-           accounts.push(ContractCreatedAccount(addr, privateKey));
-           
-           console2.log("ContractCreatedAccount[", i, "]:");
-           console2.log("  Address:", addr);
-           console2.log("  PrivateKey:", privateKey);
+       // only run if accounts aren't already generated
+       if (!(accounts.length > 0)){
+           // secp256k1 curve order - defines valid private key range
+           uint256 N = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141;
+           bytes32 masterSeed = keccak256(abi.encodePacked(masterKey));
+
+           console2.log("ACCOUNTS_COUNT");
+           console2.log(ACCOUNTS_COUNT);
+           for (uint256 i; i < ACCOUNTS_COUNT; ++i) {
+               // Derive private key using only master key and index
+               bytes32 derivedHash = keccak256(abi.encodePacked(masterSeed, i));
+               uint256 privateKey = uint256(derivedHash) % N;
+               
+               // Ensure non-zero key
+               if (privateKey == 0) continue;
+               
+               address addr = vm.addr(privateKey);
+               accounts.push(ContractCreatedAccount(addr, privateKey));
+               
+               console2.log("ContractCreatedAccount[", i, "]:");
+               console2.log("  Address:", addr);
+               console2.log("  PrivateKey: 0x%x", privateKey);
+           }
        }
    }
 
-   function exportAccounts() public view {
-       require(accounts.length == ACCOUNTS_COUNT, "Generate accounts first");
+   function exportAccounts() public {
+       genAccounts();
        console2.log("[");
        for (uint256 i; i < accounts.length; ++i) {
            console2.log("{");
@@ -58,12 +71,13 @@ contract AccountOps is Script {
        console2.log("]");
    }
 
-   function getAccounts() public view returns (ContractCreatedAccount[] memory) {
+   function getAccounts() public returns (ContractCreatedAccount[] memory) {
+       genAccounts();
        return accounts;
    }
 
    function distribute() public {
-       require(accounts.length == ACCOUNTS_COUNT, "Generate accounts first");
+       genAccounts();
        vm.startBroadcast(masterKey);
 
        for (uint256 i; i < accounts.length; ++i) {
@@ -75,6 +89,7 @@ contract AccountOps is Script {
    }
 
    function simulateActivity() public {
+       genAccounts();
        for (uint256 round; round < ACTIVITY_ROUNDS; ++round) {
            for (uint256 i; i < accounts.length; ++i) {
                if (accounts[i].addr.balance >= MIN_TRANSFER / 2) {
@@ -92,6 +107,7 @@ contract AccountOps is Script {
    }
 
    function consolidate() public {
+       genAccounts();
        for (uint256 i; i < accounts.length; ++i) {
            uint256 balance = accounts[i].addr.balance;
            if (balance > 0) {
