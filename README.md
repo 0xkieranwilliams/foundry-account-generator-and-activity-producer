@@ -25,9 +25,14 @@ cp .env.example .env
 
 Required `.env` configuration:
 ```bash
-MASTER_KEY=             # Root private key
-CONSOLIDATION_TARGET=   # Consolidation address
-RPC_URL=               # RPC endpoint
+MASTER_KEY=                          # Root private key
+CONSOLIDATION_TARGET=                # Consolidation address
+RPC_URL=                             # RPC endpoint
+
+# Script Paramater Configuration
+ACCOUNTS_COUNT=50                    # number of accounts to create and have interact
+MIN_TRANSFER=10000000000000000       # 0.01 ether in wei
+ACTIVITY_ROUNDS=5                    # number of interaction rounds per account
 ```
 
 ## Usage
