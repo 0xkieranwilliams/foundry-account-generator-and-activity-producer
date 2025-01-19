@@ -67,8 +67,13 @@ ACTIVITY_ROUNDS = 5;        // Simulation rounds
 
 Key derivation:
 ```solidity
-bytes32 masterSeed = keccak256(abi.encodePacked(masterKey, block.chainid));
-uint256 privateKey = uint256(keccak256(abi.encodePacked(masterSeed, i)));
+// secp256k1 curve order - defines valid private key range
+uint256 N = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141;
+bytes32 masterSeed = keccak256(abi.encodePacked(masterKey));
+
+// Derive private key using only master key and index
+bytes32 derivedHash = keccak256(abi.encodePacked(masterSeed, i));
+uint256 privateKey = uint256(derivedHash) % N;
 ```
 
 ## Output Formats
