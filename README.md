@@ -4,7 +4,7 @@ Foundry-based toolkit for deterministic account generation and transaction simul
 
 ## Features
 
-- Deterministic account generation (50 accounts)
+- Deterministic account generation (n accounts)
 - Chain-aware key derivation
 - Fund distribution and consolidation
 - Transaction simulation with temporal variance
